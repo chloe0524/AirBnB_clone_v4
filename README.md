@@ -163,6 +163,7 @@ Second part of Airbnb: Joann Vuong
 
 ## Forked Authors
 Teddy Deberdt - [Github](https://github.com/TheWatcher01)
+<br>
 Chloe Correia - [Github](https://github.com/chloe0524)
 ## License
 Public Domain. No copy write protection. 
