@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 """
-File: 100-hbnb.py
+Module: 100-hbnb.py
 Author: TheWatcher01
 Date: 30-05-2024
-Description: This module is the flask backend for the AirBnB clone project.
+Description: This module runs a Flask web application that serves a dynamic
+web page related to the HBNB project. It retrieves data from a storage engine,
+sorts it, and passes it to a template.
 """
+
 import uuid
 from models import storage
 from models.state import State
@@ -13,35 +16,42 @@ from models.amenity import Amenity
 from models.place import Place
 from os import environ
 from flask import Flask, render_template
+
 app = Flask(__name__)
 # app.jinja_env.trim_blocks = True
 # app.jinja_env.lstrip_blocks = True
 
 
 @app.teardown_appcontext
-def close_db(error):
-    """ Remove the current SQLAlchemy Session """
-    storage.close()
+def close_db(error) -> None:
+    """
+    At the end of each web request, it removes the current SQLAlchemy Session.
+    """
+    storage.close()  # Close the database session
 
 
 @app.route('/100-hbnb/', strict_slashes=False)
-def hbnb():
-    """ HBNB is alive! """
-    states = storage.all(State).values()
-    states = sorted(states, key=lambda k: k.name)
-    st_ct = []
+def hbnb() -> str:
+    """
+    Route that serves a dynamic web page. It retrieves data from the storage
+    engine, sorts it, and passes it to a template.
+    """
+    # Retrieve and sort states
+    states = sorted(storage.all(State).values(), key=lambda k: k.name)
+    # For each state, retrieve and sort its cities
+    st_ct = [[state, sorted(state.cities, key=lambda k: k.name)]
+             for state in states]
 
-    for state in states:
-        st_ct.append([state, sorted(state.cities, key=lambda k: k.name)])
+    # Retrieve and sort amenities
+    amenities = sorted(storage.all(Amenity).values(), key=lambda k: k.name)
 
-    amenities = storage.all(Amenity).values()
-    amenities = sorted(amenities, key=lambda k: k.name)
+    # Retrieve and sort places
+    places = sorted(storage.all(Place).values(), key=lambda k: k.name)
 
-    places = storage.all(Place).values()
-    places = sorted(places, key=lambda k: k.name)
-
+    # Generate a unique ID for cache busting
     cache_id = uuid.uuid4()
 
+    # Render the template with the sorted data and cache ID
     return render_template('4-hbnb.html',
                            states=st_ct,
                            amenities=amenities,
@@ -50,5 +60,7 @@ def hbnb():
 
 
 if __name__ == "__main__":
-    """ Main Function """
-    app.run(host='0.0.0.0', port=5000)
+    """
+    Main function that runs the Flask web application.
+    """
+    app.run(host='0.0.0.0', port=5000)  # Run the app
