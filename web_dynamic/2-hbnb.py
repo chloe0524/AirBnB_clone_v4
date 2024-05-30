@@ -19,7 +19,7 @@ def close_db(error):
     storage.close()
 
 
-@app.route('/2-hbnb/', strict_slashes=False)
+@app.route('/2-hbnb', strict_slashes=False)
 def hbnb():
     """ HBNB is alive! """
     states = storage.all(State).values()
@@ -40,7 +40,7 @@ def hbnb():
     return render_template('2-hbnb.html',
                            states=st_ct,
                            amenities=amenities,
-                           places=places
+                           places=places,
                            cache_id=cache_id)
 
 
