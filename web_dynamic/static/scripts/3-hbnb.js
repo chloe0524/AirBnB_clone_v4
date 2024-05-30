@@ -2,13 +2,28 @@
  * @file 3-hbnb.js
  * @author TheWatcher01
  * @date 30-05-2024
- * @description Script that loads places from the API using jQuery and AJAX
+ * @description This module handles user interaction for the HBNB project. It manages
+ * the selection of amenities, the status of the API, and the retrieval and display of
+ * places from the API.
  */
 
+/* global $ */
 
 $(document).ready(() => {
+  /**
+   * @type {Object.<string, string>}
+   * @description Stores the amenities that have been checked. The keys are the amenity
+   * IDs and the values are the amenity names.
+   */
   const reviewedA = {};
 
+  /**
+   * @description Event listener for changes on checkbox inputs. When a checkbox is
+   * checked, the amenity ID and name are stored in the reviewedA object. When a checkbox
+   * is unchecked, the amenity ID and name are removed from the reviewedA object. The
+   * text of the h4 element in the amenities div is updated to display the names of the
+   * checked amenities.
+   */
   $('input[type="checkbox"]').change(function () {
     const AId = $(this).data('id');
     const AName = $(this).data('name');
@@ -21,12 +36,23 @@ $(document).ready(() => {
     $('.amenities h4').text(Object.values(reviewedA).join(', '));
   });
 
+  /**
+   * @description GET request to the API to get the status. If the status is 'OK', the
+   * 'available' class is added to the #api_status div. If the status is not 'OK', the
+   * 'available' class is removed from the #api_status div.
+   */
   $.get('http://localhost:5001/api/v1/status/', (data, textStatus) => {
     if (textStatus === 'success') {
       $('#api_status').toggleClass('available', data.status === 'OK');
     }
   });
 
+  /**
+   * @description POST request to the API to get places. The places are displayed in the
+   * places section. Each place is displayed in an article element with the place's name,
+   * price per night, maximum number of guests, number of rooms, number of bathrooms, and
+   * description.
+   */
   $.ajax({
     type: 'POST',
     url: 'http://0.0.0.0:5001/api/v1/places_search/',
